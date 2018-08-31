@@ -1,0 +1,41 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ctsutilsinternalwar
+  labels:
+    app: ctsutilsinternalwar
+spec:
+  ports:
+    - port: 9080
+  selector:
+    app: ctsutilsinternalwar
+  type: NodePort
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: ctsutilsinternalwar
+  name: ctsutilsinternalwar
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ctsutilsinternalwar
+    spec:
+      containers:
+      - image: mycluster.icp:8500/default/ctsutilsinternalwar:latest
+        name: ctsutilsinternalwar
+        env:
+          - name: WLP_LOGGING_CONSOLE_FORMAT
+            value: json
+          - name: WLP_LOGGING_CONSOLE_LOGLEVEL
+            value: info
+          - name: WLP_LOGGING_CONSOLE_SOURCE
+            value: message,trace,accessLog,ffdc
+        ports:
+        - containerPort: 9080
+          protocol: TCP
